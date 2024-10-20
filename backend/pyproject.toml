@@ -1,0 +1,16 @@
+[project]
+name = "pycon-apac-2024"
+version = "1.0.0"
+description = "Demonstrating FastAPI + Next.js integration with OpenAPI TypeScript and React Query"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "fastapi[standard]>=0.115.2",
+    "python-ulid[pydantic]>=3.0.0",
+    "tortoise-orm>=0.21.7",
+]
+
+[tool.uv]
+dev-dependencies = [
+    "ruff>=0.7.0",
+]
