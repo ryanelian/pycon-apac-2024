@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Optional, Union
 
 from fastapi import APIRouter, Query
 from pydantic import BaseModel
@@ -17,7 +17,7 @@ class V2UserResponseModel(BaseModel):
 
 class V2UserListResponseModel(BaseModel):
     items: List[V2UserResponseModel]
-    cursor: str
+    cursor: Union[str, None]
 
 
 # GET /v2/users - Cursor-based pagination for retrieving users
@@ -28,7 +28,8 @@ async def get_users_v2(
     ),  # Cursor for pagination
 ) -> V2UserListResponseModel:
     # Hardcoded limit
-    limit = 50
+    # limit = 50
+    limit = 2
 
     # Build the query
     query = User.all().order_by("id")
@@ -55,6 +56,6 @@ async def get_users_v2(
 
     # If there are possibly more results, as in we managed to fetch 50 items,
     # return the last item's ID as the cursor to continue search
-    cursor = items[-1].id if len(items) == limit else ""
+    cursor = items[-1].id if len(items) == limit else None
 
     return V2UserListResponseModel(items=items, cursor=cursor)
