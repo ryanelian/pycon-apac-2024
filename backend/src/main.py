@@ -27,9 +27,9 @@ app = FastAPI(
 )
 
 
-@app.get("/")
-def read_root() -> str:
-    return "Hello, World!"
+# @app.get("/")
+# def read_root() -> str:
+#     return "Hello, World!"
 
 
 app.include_router(v1_users_router, prefix="/v1")

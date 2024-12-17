@@ -1,29 +1,31 @@
 from fastapi import APIRouter
 from pydantic import BaseModel, Field
-from tortoise.exceptions import DoesNotExist
 from ulid import ULID
-from typing import Union, Literal
-
-from responses.NotFound404 import NotFound404Exception, not_found_404_response
-from tables import User
+from typing import Literal, Annotated
 
 router = APIRouter()
 
-class PasscodeNotRequired(BaseModel):
-    require_passcode: Literal[False] = False
+class RequiredPasscode(BaseModel):
+    required: Literal[False]
 
-
-class PasscodeRequired(BaseModel):
-    require_passcode: Literal[True] = True
+class OptionalPasscode(BaseModel):
+    required: Literal[True]
     passcode_length: int = Field(ge=6, le=6)
 
+Passcode = OptionalPasscode | RequiredPasscode
 
-class V1UserResponseModel(BaseModel):
+class AnnotatedResponse(BaseModel):
     id: str
-    passcode: Union[PasscodeNotRequired, PasscodeRequired]
+    passcode: Annotated[Passcode, Field(discriminator="required")]
 
+@router.get("/annotated")
+async def annotated() -> AnnotatedResponse:
+    return SampleResponse(id=ULID().new(), passcode={"required": False})
 
-# GET /users - Retrieve all users
-@router.get("/users")
-async def get_users_v1() -> list[V1UserResponseModel]:
-    return []
+class UnionResponse(BaseModel):
+    id: str
+    passcode: OptionalPasscode | RequiredPasscode
+
+@router.get("/union")
+async def union() -> UnionResponse:
+    return UnionResponse(id=ULID().new(), passcode={"required": False})

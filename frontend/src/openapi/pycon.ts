@@ -4,15 +4,15 @@
  */
 
 export interface paths {
-    "/": {
+    "/v1/annotated": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Read Root */
-        get: operations["read_root__get"];
+        /** Annotated */
+        get: operations["annotated_v1_annotated_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -21,15 +21,15 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v1/users": {
+    "/v1/union": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Get Users V1 */
-        get: operations["get_users_v1_v1_users_get"];
+        /** Union */
+        get: operations["union_v1_union_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -42,34 +42,37 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
-        /** PasscodeNotRequired */
-        PasscodeNotRequired: {
-            /**
-             * Require Passcode
-             * @default false
-             * @constant
-             * @enum {boolean}
-             */
-            require_passcode: false;
-        };
-        /** PasscodeRequired */
-        PasscodeRequired: {
-            /**
-             * Require Passcode
-             * @default true
-             * @constant
-             * @enum {boolean}
-             */
-            require_passcode: true;
-            /** Passcode Length */
-            passcode_length: number;
-        };
-        /** V1UserResponseModel */
-        V1UserResponseModel: {
+        /** AnnotatedResponse */
+        AnnotatedResponse: {
             /** Id */
             id: string;
             /** Passcode */
-            passcode: components["schemas"]["PasscodeNotRequired"] | components["schemas"]["PasscodeRequired"];
+            passcode: components["schemas"]["OptionalPasscode"] | components["schemas"]["RequiredPasscode"];
+        };
+        /** OptionalPasscode */
+        OptionalPasscode: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            required: "True";
+            /** Passcode Length */
+            passcode_length: number;
+        };
+        /** RequiredPasscode */
+        RequiredPasscode: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            required: "False";
+        };
+        /** UnionResponse */
+        UnionResponse: {
+            /** Id */
+            id: string;
+            /** Passcode */
+            passcode: components["schemas"]["OptionalPasscode"] | components["schemas"]["RequiredPasscode"];
         };
     };
     responses: never;
@@ -80,7 +83,7 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    read_root__get: {
+    annotated_v1_annotated_get: {
         parameters: {
             query?: never;
             header?: never;
@@ -95,12 +98,12 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": string;
+                    "application/json": components["schemas"]["AnnotatedResponse"];
                 };
             };
         };
     };
-    get_users_v1_v1_users_get: {
+    union_v1_union_get: {
         parameters: {
             query?: never;
             header?: never;
@@ -115,7 +118,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["V1UserResponseModel"][];
+                    "application/json": components["schemas"]["UnionResponse"];
                 };
             };
         };
