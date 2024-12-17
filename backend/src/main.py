@@ -4,7 +4,6 @@ from fastapi import FastAPI
 from tortoise.contrib.fastapi import RegisterTortoise
 
 from api.v1.users import router as v1_users_router
-from api.v2.users import router as v2_users_router
 
 
 @asynccontextmanager
@@ -28,10 +27,9 @@ app = FastAPI(
 )
 
 
-@app.get("/")
-def read_root() -> str:
-    return "Hello, World!"
+# @app.get("/")
+# def read_root() -> str:
+#     return "Hello, World!"
 
 
 app.include_router(v1_users_router, prefix="/v1")
-app.include_router(v2_users_router, prefix="/v2")
